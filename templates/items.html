@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Items - FastAPI Pro{% endblock %}
+
+{% block content %}
+<div class="space-y-6 fade-in">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Items</h1>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Manage your items ({{ total }} total)
+            </p>
+        </div>
+        <div class="flex gap-3">
+        <a href="/dashboard" class="btn-secondary">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
+        </a>
+            <a href="/items/create" class="btn-primary">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                New Item
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filters Card -->
+    <div class="card">
+        <form method="GET" action="/items" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input 
+                        type="text" 
+                        name="search" 
+                        value="{{ search }}"
+                        placeholder="Search items..." 
+                        class="form-input pl-10 focus-ring"
+                    >
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="btn-primary">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Search
+                </button>
+                {% if search %}
+                <a href="/items" class="btn-secondary">
+                    Clear
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Items Table Card -->
+    <div class="card p-0 overflow-hidden">
+        {% if items %}
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Created</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for item in items %}
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                        <td class="font-medium text-gray-900 dark:text-white">
+                            <a href="/items/{{ item.id }}/edit" class="hover:text-primary-600 dark:hover:text-primary-400">
+                                {{ item.title }}
+                            </a>
+                        </td>
+                        <td class="text-gray-600 dark:text-gray-400 max-w-md truncate" title="{{ item.description or '' }}">
+                            {{ item.description or '-' }}
+                        </td>
+                        <td class="text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                            {{ item.created_at.strftime('%b %d, %Y %I:%M %p') if item.created_at else 'N/A' }}
+                        </td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end space-x-2">
+                                <!-- Edit Button -->
+                                <a href="/items/{{ item.id }}/edit" 
+                                   class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all"
+                                   title="Edit item">
+                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Edit
+                                </a>
+                                
+                                <!-- Delete Button -->
+                                <form method="POST" action="/items/{{ item.id }}/delete" class="inline" onsubmit="return confirm('Are you sure you want to delete {{ item.title | truncate(20) }}?');">
+                                    <button type="submit" 
+                                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all"
+                                            title="Delete item">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <div class="text-sm text-gray-700 dark:text-gray-300">
+                Showing {{ ((page-1) * 10) + 1 }} to {{ min(page * 10, total) }} of {{ total }} results
+            </div>
+            <div class="flex gap-2">
+                {% if page > 1 %}
+                <a href="?page={{ page-1 }}{% if search %}&search={{ search }}{% endif %}" 
+                   class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                    Previous
+                </a>
+                {% endif %}
+                
+                {% if page < total_pages %}
+                <a href="?page={{ page+1 }}{% if search %}&search={{ search }}{% endif %}" 
+                   class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                    Next
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-16">
+            <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.217a.75.75 0 00-.712 1.28l.288.474c.44.724.724 1.55.86 2.398.132.877.413 1.71.823 2.47.41.76.802 1.49 1.17 2.18A6.054 6.054 0 0012 20c3.31 0 6.15-1.55 8.04-3.96 1.89-2.39 3.31-5.45 3.31-8.81 0-3.34-2.24-6.28-5.42-7.44z"/>
+            </svg>
+            <h3 class="mt-2 text-xl font-semibold text-gray-900 dark:text-white">No items found</h3>
+            <p class="mt-1 text-gray-500 dark:text-gray-400">
+                {% if search %}
+                No items match your search for "{{ search }}"
+                {% else %}
+                You haven't created any items yet
+                {% endif %}
+            </p>
+            <div class="mt-6">
+                <a href="/items/create" class="btn-primary">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Create Your First Item
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -7,3 +7,5 @@ passlib[bcrypt]
 python-multipart
 pydantic
 pydantic-settings
+itsdangerous
+starlette

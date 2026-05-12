@@ -19,9 +19,9 @@ def create_test_user():
             return
 
         # Create new test user
-        hashed_password = get_password_hash("pass123")  # Shorter password
+        hashed_password = get_password_hash("password")  # Simple password for demo
         test_user = User(
-            email="test@example.com",
+            email="user@example.com",
             hashed_password=hashed_password,
             is_active=True
         )
@@ -31,10 +31,10 @@ def create_test_user():
         db.refresh(test_user)
 
         print("✅ Test user created successfully!")
-        print("📧 Email: test@example.com")
-        print("🔒 Password: pass123")
-        print("\nYou can now login at: POST /auth/token")
-        print("Use these credentials in the request body:")
+        print("📧 Email: user@example.com")
+        print("🔒 Password: password")
+        print("\nYou can now login at: http://127.0.0.1:8000/login")
+        print("Use these credentials in the login form:")
         print("username: test@example.com")
         print("password: pass123")
 

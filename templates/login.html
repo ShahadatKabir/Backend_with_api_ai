@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Login - FastAPI Pro{% endblock %}
+
+{% block description %}Sign in to your FastAPI Pro dashboard{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="mx-auto h-16 w-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+                Welcome back
+            </h2>
+            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Sign in to your account to continue
+            </p>
+        </div>
+
+        <!-- Login Form Card -->
+        <div class="card fade-in">
+            <form method="POST" action="/login" class="space-y-6">
+                <!-- Error Message -->
+                {% if error %}
+                <div class="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-300">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">{{ error }}</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Username Field -->
+                <div>
+                    <label for="username" class="form-label">Email address</label>
+                    <input 
+                        type="email" 
+                        name="username" 
+                        id="username" 
+                        required 
+                        autocomplete="email"
+                        class="form-input focus-ring"
+                        placeholder="Enter your email"
+                        value=""
+                    >
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="password" 
+                        required 
+                        autocomplete="current-password"
+                        class="form-input focus-ring"
+                        placeholder="Enter your password"
+                    >
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="w-full btn-primary py-3 text-base font-medium"
+                >
+                    Sign in
+                </button>
+            </form>
+
+            <!-- Demo Credentials -->
+            <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="text-sm text-blue-700 dark:text-blue-300">
+                        <p class="font-medium mb-1">Demo Credentials</p>
+                        <p class="font-mono">user@example.com / password</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to API Docs -->
+        <div class="text-center">
+            <a href="/docs" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500">
+                ← Back to API Documentation
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
