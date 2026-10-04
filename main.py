@@ -137,11 +137,12 @@ async def items_list_page(
     request: Request,
     page: int = 1,
     search: str = "",
+    sort: str = "newest",
     db: Session = Depends(get_db)
 ):
     """Render items list page with pagination and search"""
     from models.item import Item
-    from sqlalchemy import or_
+    from routes.items import apply_item_filters, apply_item_sorting
     
     current_user = await get_current_user(
         await request.cookies.get("access_token", "").replace("Bearer ", ""),
@@ -153,13 +154,8 @@ async def items_list_page(
     
     per_page = 10
     query = db.query(Item)
-    
-    if search:
-        query = query.filter(or_(
-            Item.title.ilike(f"%{search}%"),
-            Item.description.ilike(f"%{search}%")
-        ))
-    
+    query = apply_item_filters(query, search)
+    query = apply_item_sorting(query, sort)
     total = query.count()
     items = query.offset((page - 1) * per_page).limit(per_page).all()
     total_pages = (total + per_page - 1) // per_page
@@ -171,7 +167,8 @@ async def items_list_page(
         "page": page,
         "total_pages": total_pages,
         "total": total,
-        "search": search
+        "search": search,
+        "sort_by": sort
     })
 
 @app.get("/items/create", response_class=HTMLResponse, name="item_create")
