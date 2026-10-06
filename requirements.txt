@@ -1,4 +1,6 @@
 fastapi
+jinja2
+email-validator
 uvicorn[standard]
 sqlalchemy
 alembic

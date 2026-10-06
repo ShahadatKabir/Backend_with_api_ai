@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime, timedelta
+
+import uvicorn
 from fastapi import FastAPI, Request, Depends, HTTPException, Form, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -347,3 +349,7 @@ def get_flashed_messages(request: Request, with_categories: bool = False):
 
 # Make flash and get_flashed_messages available to templates
 templates.env.globals["get_flashed_messages"] = get_flashed_messages
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
